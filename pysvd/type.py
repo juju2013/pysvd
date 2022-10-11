@@ -33,6 +33,9 @@ class cpuName(Enum):
     CA53 = 'CA53'
     CA57 = 'CA57'
     CA72 = 'CA72'
+    # some "exotic" archi:
+    LX6 = 'Xtensa LX6'
+    RV32IMC = 'RV32IMC'
     other = 'other'
 
     def __str__(self):
@@ -143,10 +146,10 @@ class access(Enum):
     read_write = 'read-write'
     writeOnce = 'writeOnce'
     read_writeOnce = 'read-writeOnce'
+    read_writeonce = 'read-writeonce'
 
     def __str__(self):
         return self.value
-
 
 class modifiedWriteValues(Enum):
     """Specifies the pre-defined tokens for the write side effects"""

@@ -54,11 +54,4 @@ def Enum(enum, value, default=None):
     """Get enum value from the provided value looking up in EnumClass.
     If None, default is returned
     """
-    if value is None:
-        return default
-
-    for pair in enum:
-        if pair.value == value:
-            return pair
-
-    raise KeyError("Value '{}' not contained in enum type".format(value))
+    return default if value is None else enum(value)

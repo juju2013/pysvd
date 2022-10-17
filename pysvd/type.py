@@ -137,7 +137,18 @@ class sauAccess(Enum):
 # enumeratedValueData
 # Specifies the number formats for the values in enumeratedValues
 
+def ignoreCaseEnum(cls):
+  """Decorator to make a case insensitive enum, idea from https://stackoverflow.com/a/42659222"""
+  @classmethod
+  def _missing_value_(cls, name):
+    for member in cls:
+      if member.value.lower() == name.lower():
+        return member
+        
+  setattr(cls, '_missing_', _missing_value_)
+  return cls
 
+@ignoreCaseEnum
 class access(Enum):
     """Specfies the pre-defined tokens for the available accesses"""
 
@@ -146,11 +157,11 @@ class access(Enum):
     read_write = 'read-write'
     writeOnce = 'writeOnce'
     read_writeOnce = 'read-writeOnce'
-    read_writeonce = 'read-writeonce'
 
     def __str__(self):
         return self.value
 
+                
 class modifiedWriteValues(Enum):
     """Specifies the pre-defined tokens for the write side effects"""
 

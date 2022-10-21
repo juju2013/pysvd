@@ -41,7 +41,7 @@ class Device(pysvd.classes.Base):
         self.add_attribute(node, 'name', pysvd.parser.Text, True)
         self.add_attribute(node, 'series', pysvd.parser.Text)
         self.add_attribute(node, 'version', pysvd.parser.Text, True)
-        self.add_attribute(node, 'description', pysvd.parser.Text, True)
+        self.add_attribute(node, 'description', pysvd.parser.Text)
         self.add_attribute(node, 'licenseText', pysvd.parser.Text)
         self.add_attribute(node, 'headerSystemFilename', pysvd.parser.Text)
         self.add_attribute(node, 'headerDefinitionsPrefix', pysvd.parser.Text)
@@ -270,7 +270,7 @@ class Peripheral(pysvd.classes.Dim):
             Cluster.add_elements(self, self.clusters, registers_node, 'cluster')
 
             if len(self.registers) < 1 and len(self.clusters) < 1:
-                raise SyntaxError("At least one element of 'register' or 'cluster' is mandatory in 'registers'")
+                raise SyntaxError(f"At least one element of 'register' or 'cluster' is mandatory in {self.name}.'registers'")
 
     def find(self, name):
         """Find cluster and register by name."""
@@ -472,7 +472,7 @@ class Register(pysvd.classes.Dim):
             Field.add_elements(self, self.fields, fields_node, 'field')
 
             if len(self.fields) < 1:
-                raise SyntaxError("At least one element of 'field' is mandatory in 'fields'")
+                raise SyntaxError(f"At least one element of 'field' is mandatory in '{self.parent.name}.{self.name}.fields'")
 
     def find(self, name):
         """Find field by name."""
@@ -509,7 +509,7 @@ class WriteConstraint(pysvd.classes.Parent):
                 rangeMaximum = pysvd.node.Element(range_node, 'maximum')
 
             if rangeMinimum is None or rangeMaximum is None:
-                raise SyntaxError("Either 'writeAsRead', 'useEnumeratedValues' or 'range' is mandatory in 'writeConstraint'")
+                raise SyntaxError(f"Either 'writeAsRead', 'useEnumeratedValues' or 'range' is mandatory in {parent.name}.'writeConstraint'")
 
             self.__dict__['rangeMinimum'] = pysvd.parser.Integer(rangeMinimum)
             self.__dict__['rangeMaximum'] = pysvd.parser.Integer(rangeMaximum)
@@ -596,8 +596,7 @@ class Field(pysvd.classes.Dim):
             if lsb is None or msb is None:
                 bitRange = pysvd.parser.Text(pysvd.node.Element(node, 'bitRange'))
                 if bitRange is None:
-                    raise ValueError("Field '{}' has no valid bit-range".format(self.name if hasattr(self, 'name') else '<unknown>'))
-
+                    raise ValueError(f"Field '{parent.parent.name}.{parent.name}.{self.name if hasattr(self, 'name') else '<unknown>'}' has no valid bit-range")
                 match = re.search(r'\[([0-9]+):([0-9]+)\]', bitRange)
                 lsb = int(match.group(2))
                 msb = int(match.group(1))
